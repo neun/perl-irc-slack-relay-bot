@@ -1,7 +1,6 @@
 package SlackBot;
 $SlackBot::VERSION = '0.161009'; # YYMMDD
 
-use v5.14;
 use strict;
 use warnings;
 use utf8;
@@ -366,7 +365,7 @@ sub on_timer{
 					my @lines = split /[\x0d\x0a]+/,$self->decode_message($msg);
 					for my $line (@lines){
 						next if not ( defined $msg and length $msg ) ;
-						$self->_filter_and_relay( $message->{channel},"<$from> $line");
+						$self->_filter_and_relay( $message->{channel},"`$from` $line");
 					}
 				}
 #				if( $message->{attachments} ){
@@ -583,16 +582,13 @@ sub _flush_cue{
 	$@ and $self->{logger}->w("send failed. %s",$@);
 }
 
-
-
-
 # slackのチャンネルにメッセージを送る
 # $msg はUTF8フラグつきの文字列
 sub send_message{
 	my($self,$channel_id,$msg)=@_;
 
 	return if $self->{is_disposed};
-	
+
 	my $tx_channel = $self->{tx_channel}{$channel_id};
 	$tx_channel or $tx_channel = $self->{tx_channel}{$channel_id} = {
 		cue => [],

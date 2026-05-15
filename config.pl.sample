@@ -3,6 +3,8 @@ use utf8;
 use strict;
 use warnings;
 
+no warnings 'qw';
+
 my $dummy_value = {
 
 	# debug log. one of debug,verbose,info,warning,error
@@ -51,6 +53,27 @@ my $dummy_value = {
 			user_agent => 'tateisu/perl-irc-slack-relay-bot',
 			ping_interval => 60,
 			user_list_interval => 300,
+		},
+	],
+
+	# matrix account list.
+	matrix_connections => [
+		{
+			name => "matrix1",
+			disabled => 0,
+
+			userAgent => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36",
+
+			serverPrefix => "https://matrix.fedibird.com/_matrix/client/r0",
+
+ 			mediaPrefix =>"https://matrix.fedibird.com/_matrix/media/r0/download/",
+ 
+			# if you have token, we can skip login.
+			token =>"xxxxxxxx",
+
+			# else we have to use login API.
+			user => "xxxxxx",
+			password => "xxxxxx",
 		},
 	],
 
@@ -139,7 +162,7 @@ my $dummy_value = {
 			# 1 for iso-2022-jp, 0 for UTF-8
 			is_jis => 1,
 
-			# chanels to join when after connection authoprized.
+			# chanels to join when after connection authorized.
 			auto_join =>[
 				'#channel1', '#channel2', # ...
 			],
@@ -158,38 +181,49 @@ my $dummy_value = {
 			# Disable this relay. 0(default):not disable, 1:disable
 			disabled => 0,
 
-			# Name of slack connection
-			slack_conn => 'slack1',
+			# list of roomSpecs for inputs.
+			in=>[
+				[qw( irc irc1 #irc-channel1)],
+			],
 
-			# Name of slack channel
-			slack_channel => '#slack-channel1',
+			# list of roomSpecs for outputs.
+			out=>[
+				# type connName roomName
+				[qw( slack slack1 #slack-channel1)],
+			],
 
-			# Name of IRC connection
-			irc_conn => 'irc1',
+			# list of roomSpecs for both of inputs and outputs.
+			inout=>[
+				# type connName roomName
+				[qw( slack slack2 #slack-channel2)],
+				# type connName roomName
+				[qw( irc irc2 #irc-channel2)],
 
-			# Name of IRC channel
-			irc_channel => '#irc-channel1',
+				# type connName roomId
+				[qw(matrix matrix1 !xQyixSzpkrbjaexNlL:matrix.fedibird.com)],
+			],
 
-			# Enable/Disable relay Slack to IRC. 0(default):off, 1:on
-			slack_to_irc => 1,
-
-			# Enable/Disable relay IRC to Slack. 0(default):off, 1:on
-			irc_to_slack => 1,
-
-			# Don't relay incoming IRC NOTICE message. 0(default):off, 1:on
+			# (IRC) (input) Don't relay incoming IRC NOTICE message. 0(default):off, 1:on
 			dont_relay_notice =>0,
 			
-			# use NOTICE for message that outgoing to IRC. 0(default):off, 1:on
+			# (IRC) (output) use NOTICE for message that outgoing to IRC. 0(default):off, 1:on
 			use_notice =>0,
 		},
 
 		{
-			slack_conn => 'slack2',
-			slack_channel => '#slack-channel2',
-			irc_conn => 'irc2',
-			irc_channel => '#irc-channel2',
-			slack_to_irc => 1,
-			irc_to_slack => 1,
+			# list of roomSpecs for both of inputs and outputs.
+			inout=>[
+				# type connName roomName
+				[qw( slack slack2 #slack-channel2)],
+				# type connName roomName
+				[qw( irc irc2 #irc-channel2)],
+
+				# type connName roomId
+				[qw(matrix matrix1 !xQyixSzpkrbjaexNlL:matrix.fedibird.com)],
+			],
+
+			# if true, don't use this relay rule.
+			disabled => 1,
 		},
 	],
 };

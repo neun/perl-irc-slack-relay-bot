@@ -1,4 +1,5 @@
 package Logger;
+
 use strict;
 use warnings;
 use utf8;

@@ -1,14 +1,13 @@
 package SlackConnection;
 $SlackConnection::VERSION = '0.161009'; # YYMMDD
 
-use v5.14;
 use strict;
 use warnings;
 
 use Attribute::Constant;
-use JSON;
+use JSON::XS;
 use AnyEvent;
-use AnyEvent::WebSocket::Client 0.12;
+use AnyEvent::WebSocket::Client 0.53;
 use AnyEvent::HTTP;
 use URI::Escape;
 
@@ -215,6 +214,8 @@ sub start {
 		$self->_update_info( 'bots',$json->{bots} , $EVENT_BOTS );
 
 		eval{
+			warn "WebSocket to $json->{url}";
+	
 			$self->{busy_wss_connect} = 1;
 			$self->{client}->connect($json->{url})->cb(sub {
 
